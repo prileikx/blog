@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+  <!--   axios ajax方式发送post/get请求-->
+  <script src="/js/axios.min.js"></script>
+<!--  <script src="/js/jquery-3.0.0.js"></script>-->
+  <script src="/js/sweetalert2.all.min.js"></script>
+  <!--    调用cookie用的js-->
+  <script src="/js/jquery.cookie.js"></script>
+  <script src="/bootstrap-5.3.0-alpha1-dist/js/bootstrap.min.js"></script>
+  <!--    轻量级css样式-->
+<!--  <link rel="stylesheet" href="/css/picnic.css">-->
+  <link rel="stylesheet" href="/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css">
+  <style>
+    a{
+      text-decoration: none;
+    }
+    #app{
+      background-color: rgba(255,255,255,0.8);
+    }
+    .leftbtn:hover{
+      background-color: #aaa;
+    }
+    .leftbtn:active{
+      background-color: #ddd;
+    }
+    .headerbtn{
+      user-select: none;
+      width: 100px;
+      height: 50px;
+      text-align: center;
+      display: inline-block;
+      line-height: 50px;
+    }
+    .leftbtn{
+      float: left;
+    }
+    .rightbtn{
+      float: right;
+      background-color: #63e397;
+    }
+    .rightbtn:hover{
+      background-color: #0ef383;
+    }
+    .rightbtn:active{
+      background-color: #a7f5cd;
+    }
+    .rightbtn a{
+      color: black;
+    }
+    #menu{
+      width: 100px;
+      height: 250px;
+      float: right;
+      display: none;
+    }
+    .menubtn{
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      user-select: none;
+      background-color: #ccc;
+    }
+    .menubtn a{
+      color: black;
+    }
+    .menubtn:hover{
+      background-color: #aaa;
+    }
+    .menubtn:active{
+      background-color: #eee;
+    }
+    #menuusername{
+      display: none;
+    }
+    #logregdiv{
+      display: none;
+    }
+    #menubtnadiv a{
+      color: black;
+    }
+    body{
+      background-image: url('/resource/img/background.jpg');
+      background-attachment: fixed;
+    }
+    .btn {
+      border-radius: 0;
+      outline: none;
+    }
+
+    　　.btn.active.focus,
+    　　.btn.active:focus,
+    　　.btn:active.focus,.btn:active:focus,.btn:focus,btn:active,btn:hover{
+      outline: none;
+      box-shadow: none;
+    }
+
+    .dropdown-menu {
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .form-control {
+      border-radius: 0;
+    }
+  </style>
+    <title>header</title>
+</head>
+<body>
+<div id="app">
+<div style="border-bottom: #aaaaaa solid 1px;height: 50px;">
+<div class="container" style="margin: 0 auto;height: 100px;padding: 0px;max-width: 1140px" id="menubtnadiv">
+  <a href="/index.html">
+  <div class="headerbtn leftbtn">
+    首页
+  </div>
+  </a>
+<!--  <div class="headerbtn leftbtn">-->
+<!--    版区-->
+<!--  </div>-->
+<!--  <div class="headerbtn leftbtn">-->
+<!--    收藏-->
+<!--  </div>-->
+<!--  <div class="headerbtn leftbtn">-->
+<!--    消息-->
+<!--  </div>-->
+  <a href="/search.html">
+  <div class="headerbtn leftbtn">
+    搜索
+  </div>
+  </a>
+  <div class="headerbtn rightbtn" id="menuusername">
+  </div>
+  <a href="/user/login.html">
+  <div class="headerbtn rightbtn" id="logregdiv">
+      登录/注册
+  </div>
+  </a>
+  <div class="container" style="margin: 0 auto;top: 50px;position:absolute;max-width: 1140px;padding:0px;z-index: 10">
+    <div id="menu">
+      <a href="/user/msg/" id="apersonal"><div class="menubtn">个人主页</div></a>
+<!--      <a href="/user/msg/" id="auserset"><div class="menubtn">用户设置</div></a>-->
+<!--      <a href="/user/msg/" id="ausercollect"><div class="menubtn">用户收藏</div></a>-->
+<!--      <a href="/user/msg/" id="ausermsg"><div class="menubtn">用户消息</div></a>-->
+      <a id="logout"><div class="menubtn">退出登录</div></a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div>
+<script>
+  //dom加载完成后立即执行下边的语句
+$(document).ready(function () {
+  var uid=0
+  var userstatus=0
+  // 用axios以ajax方式发送post请求
+      axios({
+        method: "post",
+        url: "/user/getusername"
+      }).then(function (resp) {
+        // 若用户是登录状态则返回用户名,否则显示登陆注册
+        userstatus=resp.data.code
+        if (userstatus==1){
+          $("#menuusername").css('display','inline-block')
+          uid=resp.data.map.uid
+          $("#menuusername").text(resp.data.map.username)
+        }
+        else{
+          $("#logregdiv").css('display','inline-block')
+        }
+      }).catch(function (error) {
+        $.cookie("uid",null,{expires: -1,path: "/"})
+        $.cookie("verifycode",null,{expires: -1,path: "/"})
+        $("#logregdiv").css('display','inline-block')
+      })
+  $("#menuusername").click(function () {
+    $("#menu").toggle(500)
+  })
+  //退出登录功能
+  $("#logout").click(function (){
+    axios({
+      method: "post",
+      url: "/logoutServlet"
+    }).then(function (resp) {
+      //若不是登陆状态或者用户验证错误,则清除cookie
+      $.cookie("uid",null,{expires: -1,path: "/"})
+      $.cookie("verifycode",null,{expires: -1,path: "/"})
+      setTimeout("location.reload()",100)
+      //catch捕捉错误,如果服务器返回错误代码也会清除cookie
+    }).catch(function (error) {
+      $.cookie("uid",null,{expires: -1,path: "/"})
+      $.cookie("verifycode",null,{expires: -1,path: "/"})
+      setTimeout("location.reload()",100)
+    })
+  })
+  $("#apersonal").attr('href','/user/msg/'+$.cookie('uid'))
+  // $("#ausercollect").attr('href','/user/msg/'+$.cookie('uid'))
+  // $("#ausermsg").attr('href','/user/msg/'+$.cookie('uid'))
+  // $("#auserset").attr('href','/user/msg/'+$.cookie('uid'))
+})
+</script>
+
+</body>
+</html>

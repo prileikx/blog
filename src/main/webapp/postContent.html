@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js/vue.global.js"></script>
+    <!--   axios ajax方式发送post/get请求-->
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/jquery-3.0.0.js"></script>
+    <!--    弹窗js-->
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <!--    jquery写的分页js-->
+    <script src="/js/jq-paginator.min.js"></script>
+    <!--    轮播图js-->
+    <script src="/js/flickity.pkgd.min.js"></script>
+<!--    tinymce输入框-->
+    <script src="/js/tinymce/tinymce.min.js"></script>
+    <script src="/bootstrap-5.3.0-alpha1-dist/js/bootstrap.min.js"></script>
+    <!--    轮播图css-->
+    <link rel="stylesheet" href="/css/flickity.css">
+    <!--    轻量级css样式-->
+<!--    <link rel="stylesheet" href="/css/picnic.css">-->
+    <link rel="stylesheet" href="/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css">
+<!--    本页的专属js-->
+    <script src="/js/postcontent.js"></script>
+    <style>
+        .active > a {
+            background-color: #ddd !important;
+        }
+        /*important是最高优先级*/
+        .disabled {
+            /*设置按钮禁用*/
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+
+        .disabled a {
+            color: #aaaaaa !important;
+        }
+        .replycontent{
+            width: 70%;
+        }
+        li {
+            list-style: none;
+            user-select: none;
+        }
+        /*分页的样式*/
+        .pagination > li > a:focus, .pagination > li > a:hover, .pagination > li > a > span:focus, .pagination > li > span:hover {
+            z-index: 2;
+            color: #23527c;
+            background-color: #aaa;
+            border-color: #ddd;
+        }
+
+        .pagination > li {
+            display: inline;
+        }
+
+        .pagination > li > a, .pagination > li > span {
+            position: relative;
+            float: left;
+            padding: 6px 12px;
+            margin-left: 1px;
+            line-height: 1.42;
+            color: #337ab7;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        p{
+            margin: 0;
+        }
+        #postclasslist {
+            text-align: left;
+        }
+
+        #postclassimg {
+            width: 300px;
+            margin-top: 10px;
+        }
+
+        .postremarks {
+            font-size: 10px;
+        }
+
+        .eachpost {
+            background-color: rgba(255, 255, 255, 0.8);
+            margin: 0.6em;
+            border: #aaaaaa solid 1px;
+        }
+
+        .tox-tinymce {
+            border: 0 solid #fff !important;
+            border-radius: unset !important;
+            margin-left: 10px !important;
+            margin-top: 10px !important;
+        }
+        /*收藏相关*/
+        #collectico {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+        }
+        .usernamea{
+            color: black;
+        }
+
+        #collectico:hover {
+            background-color: #aaa;
+        }
+
+        #collectico:active {
+            background-color: #ddd;
+        }
+        /*回复相关*/
+        .replytextbtn{
+            text-decoration: underline;
+        }
+        #themereplytextbtn{
+            text-decoration: underline;
+        }
+        #replytowho{
+            margin-left: 10px;
+            /*position: relative;*/
+        }
+        #replytowhocontent{
+            height: 27px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        /*删除相关*/
+        .deletereply{
+            color: #aaa;
+        }
+        #deletepost{
+            color: #aaa;
+        }
+        .tox-tinymce{
+            margin-right:10px;
+        }
+    </style>
+</head>
+<body style="width: 100%;">
+<!--加载header.html作为导航栏-->
+<div id="header"></div>
+<script>
+    $(document).ready(function () {
+        $("#header").load("/header.html")
+    })
+</script>
+<div class="container" style="margin: 0 auto;max-width: 1140px" id="postclasslist">
+    <div id="getpid"style="display: none">{{post.pid}}</div>
+    <div class="col-12" style="display: inline-block;margin-top: 10px;">
+        <div id="pcl">
+<!--            每个帖子{{}}调用vue中的数据,:是v-bind:的缩写,绑定数据-->
+            <div class="eachpost">
+                <div class="postclassdiv">
+                    <div>
+                        <p style="margin: 10px">标题:{{post.title}}</p>
+                    </div>
+                </div>
+            </div>
+<!--            v-if判断-->
+            <div class="eachpost" style="min-height: 150px" v-if="page==1">
+                <div style="width: 100px;height: 134px;display: inline-block;margin-left: 10px;margin-right: 0;margin-top: 10px;margin-bottom: auto;float:left;">
+                    <div>
+                        <a class="usernamea" :href="'/user/msg/'+post.uid">
+                        <img :src="'/resource/img/upload/'+post.img" style="width: 100px;height: 100px;">
+                        </a>
+                    </div>
+                    <div style="text-align: center">
+                        <a class="usernamea" :href="'/user/msg/'+post.uid">
+                            {{post.username}}
+                        </a>
+                    </div>
+                </div>
+                <div style="display: inline-block;margin: 10px;margin-left: 0px;min-height: 80px">
+                    <div class="postclassdiv">
+                        <div style="margin-left: 10px;float: top">
+<!--                            v-html加载内容,当做html加载-->
+                            <p v-html="post.content" style="margin: 0"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="postremarks" style="margin-left: 120px;">
+                    <p>
+                        发帖时间:{{post.sendtime}}
+                        查看数:{{post.viewcount}}
+                        回复数:{{post.replycount}}
+                        <a href="javascript:;" id="themereplytextbtn">回复</a>&nbsp
+                        <a href="javascript:;" id="deletepost">删除</a>
+                        <img src="/resource/img/collect.png" id="collectico" alt="收藏" title="收藏">
+                    </p>
+                </div>
+            </div>
+<!--            v-for循环输出-->
+            <div v-for="r in replylist" class="col-12">
+                <div class="eachpost" style="position: relative;min-height: 150px">
+                    <div style="width: 100px;height: 134px;display: inline-block;margin-left: 10px;margin-right: 10px;margin-top: 10px;margin-bottom: auto;float:left;">
+                        <div>
+                            <a class="usernamea" :href="'/user/msg/'+r.uid">
+                            <img :src="'/resource/img/upload/'+r.img" style="width: 100px;height: 100px;">
+                            </a>
+                        </div>
+                        <div style="text-align: center">
+                            <a href="#" class="usernamea" :href="'/user/msg/'+r.uid">
+                            {{r.username}}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="postclassdiv" style="min-height: 100px">
+                        <div>
+                            <p style="margin: 10px" v-html="r.content"></p>
+                        </div>
+                    </div>
+                    <div class="postremarks" style="margin: 10px;float: bottom">
+                        <p>
+                            发帖时间:{{r.sendtime}}
+                            <a href="javascript:" class="replytextbtn">回复</a>&nbsp
+                            <a href="javascript:" class="deletereply">删除</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+<!--            分页-->
+            <ul class="pagination" style="height: 40px;margin-left: 10px"></ul>
+<!--            回复给谁-->
+            <div class="col-12" id="replytowho" style="display:none;">
+                <div style="margin-right: 20px;background-color: rgba(255, 255, 255, 0.8);border: #aaaaaa solid 1px;">
+                <div>回复给:<span id="replytowhousername"></span></div>
+                <div>回复帖子:<div id="replytowhocontent"></div></div>
+                <a href="javascript:" style="background-color:rgba(255,255,255,0.8);margin-bottom: 5px" id="cancelreply">取消回复</a>
+                </div>
+            </div>
+<!--            tinymce输入框-->
+            <textarea class="col-12" id="tinydemo" placeholder="输入帖子内容,最少五个字符"
+                      minlength="5"></textarea>
+            <div class="col-12" style="padding-right: 20px">
+            <button class="col-12 btn btn-info" id="newreply" style="margin: 10px;" @click="sendreply">发送帖子
+            </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+//dom加载完成后执行
+    $(document).ready(function () {
+        //点击回复之后的功能,添加帖子到回复区,从隐藏到展示
+        $("#themereplytextbtn").click(function () {
+            $("#replytowho").show()
+            rpindex = v.post.uid
+            $("#replytowhocontent").html(v.post.content)
+            $("#replytowhousername").text(v.post.username)
+            v.replyprigincontent = v.replylist[rpindex].content
+            v.replyuid = v.post.uid
+        })
+        //关闭回复区并且取消回复
+        $("#cancelreply").click(function () {
+            $("#replytowhocontent").html('')
+            $("#replytowhousername").text('')
+            v.replyuid = 0
+            v.replyprigincontent = ''
+            $("#replytowho").hide()
+        })
+        //收藏按钮,用axios以ajax方式发送post请求,携带pid数据
+        $("#collectico").click(function () {
+            axios({
+                method: "post",
+                url: "/insertcollectServlet",
+                data:"pid="+$("#getpid").text()
+            }).then(function (resp) {
+                //resp是返回的数据
+                //icon是弹窗时出现的图标,默认是错误,只有当正确执行时才会出现正确提示
+                var icontype='error'
+                if (resp.data.msg == '收藏成功') {
+                    icontype = 'success'
+                    // 弹窗
+                    Swal.fire({
+                        icon: icontype,
+                        title: resp.data.msg,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                else if (resp.data.msg == '已经收藏过了,是否取消收藏?'){
+                    icontype = 'error'
+                    Swal.fire({
+                        icon: icontype,
+                        title: resp.data.msg,
+                        showCancelButton: true,
+                        showConfirmButton: true,
+                        confirmButtonText: '取消收藏',
+                        cancelButtonText: "关闭",
+                    }).then((res) => {
+                        //若用户确定取消收藏则发送post请求
+                        if (res.value) {
+                            axios({
+                                method: "POST",
+                                url: "/deletecollectServlet",
+                                data:"pid="+$("#getpid").text()
+                            }).then(function (response) {
+                                console.log(response.data.msg)
+                                if (response.data.msg == "取消收藏成功") {
+                                    Swal.fire(
+                                        {
+                                            type: 'success',
+                                            icon: 'success',
+                                            title: response.data.msg,
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        }
+                                    )
+                                } else {
+                                    Swal.fire(
+                                        {
+                                            type: 'error',
+                                            icon: 'error',
+                                            title: response.data.msg,
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        }
+                                    )
+                                }
+                            })
+                        }
+                    })
+                }else {
+                    Swal.fire({
+                        icon: icontype,
+                        title: resp.data.msg,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+                //捕捉错误
+            }).catch(function (error) {
+                var icontype='error'
+                Swal.fire({
+                    icon: icontype,
+                    title: "请求发送失败",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            })
+        })
+    })
+//创建vue对象
+    const {createApp} = Vue
+    let v = createApp({
+        data() {
+            return {
+                post: [],
+                replylist: [],
+                page: 0,
+                replyuid:0,
+                replyprigincontent:'',
+            }
+        },
+        mounted() {
+            //组件加载完成后执行
+            URL = document.URL
+            resourcepositionstart = URL.indexOf("Posts");
+            resourcepositionstart = resourcepositionstart + 6
+            resourcepositionend = URL.indexOf("?");
+            pagepos = URL.indexOf("page=");
+            page = URL.substring(pagepos + 5)
+            this.page = page
+            resourcepositionend = resourcepositionend
+            pid = URL.substring(resourcepositionstart, resourcepositionend)
+            sendurl = "/getPostContentServlet/" + pid + '?page=' + page
+            console.log("page" + page)
+            //通过网址获取页码,帖子pid等
+            var _this = this;
+            axios({
+                method: "post",
+                url: sendurl
+            }).then(function (resp) {
+                _this.post = resp.data
+                document.title=resp.data.title
+                console.log(resp.data)
+            })
+            axios({
+                method: "get",
+                url: "/getReplyServlet" + '?page=' + page + "&pid=" + pid
+            }).then(function (resp) {
+                _this.replylist = resp.data
+                console.log(resp.data)
+            })
+        },
+        updated(){
+            var _this = this
+            //回复按钮的功能,将内容添加到回复区
+            $(".replytextbtn").click(function (){
+                $("#replytowho").show()
+                rpindex = $(".replytextbtn").index(this)
+                replycontent = _this.replylist[rpindex].content
+                replycontentindex = replycontent.indexOf('</p></div></div><p>');
+                if(replycontentindex!=-1){
+                    replycontent = replycontent.substring(replycontentindex+16)
+                }
+                $("#replytowhocontent").html(replycontent)
+                $("#replytowhousername").text(_this.replylist[rpindex].username)
+                _this.replyprigincontent = replycontent
+                _this.replyuid = _this.replylist[rpindex].uid
+                console.log(replycontent)
+            })
+            //删除回复功能,只有管理员和发送回复的人才能删除
+            $(".deletereply").click(function () {
+                Swal.fire({
+                    title: '您确定要删除该回复吗?',
+                    showCancelButton: true,
+                    showConfirmButton: true,
+                    confirmButtonText: '删除',
+                    cancelButtonText: "取消",
+                }).then((res) => {
+                    if (res.value) {
+                        console.log($(".deletereply").index(this))
+                        axios({
+                            method: "POST",
+                            url: "/deletereplyServlet",
+                            data: "rid=" + _this.replylist[$(".deletereply").index(this)].rid
+                        }).then(function (response) {
+                            console.log(response.data.msg)
+                            if (response.data.msg == "删除成功") {
+                                setTimeout("location.reload(true)", 1000)
+                                Swal.fire(
+                                    {
+                                        icon: 'success',
+                                        title: response.data.msg,
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    }
+                                )
+                            } else {
+                                Swal.fire(
+                                    {
+                                        icon: 'error',
+                                        title: response.data.msg,
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    }
+                                )
+                            }
+                        })
+                    }
+                })
+            })
+            // 删除帖子功能,只有管理员和发帖人可以删除
+            $("#deletepost").click(function () {
+                Swal.fire({
+                    title: '您确定要删除该帖子吗?',
+                    showCancelButton: true,
+                    showConfirmButton: true,
+                    confirmButtonText: '删除',
+                    cancelButtonText: "取消",
+                }).then((res) => {
+                    if (res.value) {
+                        console.log($(".deletereply").index(this))
+                        axios({
+                            method: "POST",
+                            url: "/deletepostServlet",
+                            data: "pid=" + _this.post.pid
+                        }).then(function (response) {
+                            console.log(response.data.msg)
+                            if (response.data.msg == "删除成功") {
+                                setTimeout("location.reload(true)", 1000)
+                                Swal.fire(
+                                    {
+                                        icon: 'success',
+                                        title: response.data.msg,
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    }
+                                )
+                            } else {
+                                Swal.fire(
+                                    {
+                                        icon: 'error',
+                                        title: response.data.msg,
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                    }
+                                )
+                            }
+                        })
+                    }
+                })
+            })
+        },
+        methods: {
+            //sendreply发送回复,
+            sendreply: function () {
+                if (tinyMCE.activeEditor.getContent().length < 5) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "帖子内容不得少于5个字符",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                } else {
+                    if(this.replyuid!=0){
+                        content ='<div>回复帖子:<div class="replycontent" style="height: 27px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;background-color:#aaa;">'+this.replyprigincontent+'</div></div>'+tinyMCE.activeEditor.getContent()
+                    }else {
+                        content=tinyMCE.activeEditor.getContent()
+                    }
+                    content = content.replaceAll('&','%26');
+                    console.log(content)
+                    axios({
+                        method: "post",
+                        url: "/sendreplyServlet",
+                        data: "pid=" + this.post.pid + "&content=" + content+"&replyuid="+this.replyuid
+                    }).then(function (resp) {
+                        iconmark = 'error'
+                        if (resp.data.msg == "发送成功") {
+                            iconmark = "success";
+                        }
+                        Swal.fire({
+                            icon: iconmark,
+                            title: resp.data.msg,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        // if (resp.data.msg == "发送成功") {
+                        //     setTimeout("window.location.reload(true)", 1000);
+                        // }
+                    })
+                }
+            }
+        }
+    }).mount('#postclasslist')
+    $("#newreply").click(function () {
+        $("#testdiv").html(tinyMCE.activeEditor.getContent())
+    })
+//初始化tinymce输入框
+    tinymce.init({
+        selector: '#tinydemo',
+        language: 'zh_CN',
+        plugins: 'preview searchreplace autolink directionality visualchars fullscreen image link media template code table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount emoticons autoresize',
+        toolbar: 'code forecolor backcolor bold italic underline strikethrough link image media | fontsize | font | alignleft aligncenter alignright lineheight | \
+                    bullist numlist  | blockquote subscript superscript removeformat | \
+                    table emoticons charmap pagebreak insertdatetime | fullscreen ',
+        menubar: false,
+        font_size_formats: '8px 10px 12px 14px 16px 18px 20px 24px 36px 48px 56px 72px',
+        autosave_ask_before_unload: false,
+        toolbar_drawer: false,
+    });
+</script>
+</body>
+</html>
