@@ -499,7 +499,7 @@
                 title: "修改头像",
                 html: `
                 <form action="/uploadServlet" method="post" enctype="multipart/form-data">
-                <p><input type="file" name="file1" id="uploadicon"></p>
+                <p><input type="file" name="file" id="uploadicon"></p>
                 </form>
                 `,
                 showCancelButton: true,
@@ -509,22 +509,22 @@
                 if (res.value) {
                     let file = $("#uploadicon")[0].files[0]
                     const formData = new FormData();
-                    formData.append("uploadFile", file);
+                    formData.append("file", file);
                     axios({
                         method: "POST",
-                        url: "/uploadServlet",
+                        url: "/file/fileupload",
                         enctype: "multipart/form-data",
                         data: formData
                     }).then(function (response) {
                         console.log(response.data)
-                        if (response.data.msg == "修改成功") {
+                        if (response.data.code == 1) {
                             //1秒后刷新网页
                             setTimeout("location.reload(true)", 1000)
                             //弹窗,,title显示返回的消息
                             Swal.fire(
                                 {
                                     icon: 'success',
-                                    title: response.data.msg,
+                                    title: response.data.data,
                                     showConfirmButton: false,
                                     timer: 2000
                                 }

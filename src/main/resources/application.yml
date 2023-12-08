@@ -7,9 +7,15 @@ spring:
     username: blog
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 logging:
   level:
     root: info
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 配置上传参数
