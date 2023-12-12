@@ -9,9 +9,9 @@ page = URL.substring(pagepos + 5)
 totalcount = 1;
     axios({
         method: "post",
-        url: "/getpostcountServlet?postclass=" + postclass
+        url: "/posts/postcount?postclass=" + postclass
     }).then(function (resp) {
-        totalcount = resp.data.totalcount
+        totalcount = resp.data.data
         $('.pagination').jqPaginator({
             totalCounts: Number(totalcount),
             pageSize: 10,

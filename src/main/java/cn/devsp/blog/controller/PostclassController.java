@@ -3,10 +3,12 @@ package cn.devsp.blog.controller;
 
 import cn.devsp.blog.common.R;
 import cn.devsp.blog.service.IPostclassService;
+import cn.devsp.blog.service.impl.PostclassServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,6 +27,11 @@ public class PostclassController {
     @PostMapping("/selectPostpcnameServlet")
     public R selectPostpcnameServlet(){
         R r = postclassService.selectpostname();
+        return r;
+    }
+    @PostMapping("/getpostclassname")
+    public R getpostclassname(@RequestParam String postclass){
+        R r = postclassService.getpostclassname(postclass);
         return r;
     }
 }

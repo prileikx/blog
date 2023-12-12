@@ -18,7 +18,7 @@ public class SpringMvcSupport extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/user/**").addResourceLocations("/user/");
         registry.addResourceHandler("/index.html").addResourceLocations("/index.html");
         registry.addResourceHandler("/search.html").addResourceLocations("/search.html");
-        registry.addResourceHandler("/PosrList.html").addResourceLocations("/PosrList.html");
+        registry.addResourceHandler("/PostList.html").addResourceLocations("/PostList.html");
         registry.addResourceHandler("/postContent.html").addResourceLocations("/postContent.html");
         registry.addResourceHandler("/upload.html").addResourceLocations("/upload.html");
         registry.addResourceHandler("/header.html").addResourceLocations("/header.html");

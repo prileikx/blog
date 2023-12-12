@@ -9,9 +9,9 @@ resourcepositionend = resourcepositionend
 pid = URL.substring(resourcepositionstart, resourcepositionend)
     axios({
         method: "post",
-        url: "/getreplycountServlet?pid="+pid
+        url: "/reply/replycount?pid="+pid
     }).then(function (resp) {
-        totalcount = resp.data.totalcount
+        totalcount = resp.data.data
         console.log("totalcount="+totalcount)
         console.log("page="+page)
         $('.pagination').jqPaginator({

@@ -14,4 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IPostclassService extends IService<Postclass> {
     R selectpostname();
+
+
+    R getpostclassname(String postclass);
 }

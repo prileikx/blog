@@ -367,24 +367,21 @@
             this.page = page
             resourcepositionend = resourcepositionend
             pid = URL.substring(resourcepositionstart, resourcepositionend)
-            sendurl = "/getPostContentServlet/" + pid + '?page=' + page
-            console.log("page" + page)
+            sendurl = "/posts/postcontent/" + pid + '?page=' + page
             //通过网址获取页码,帖子pid等
             var _this = this;
             axios({
                 method: "post",
                 url: sendurl
             }).then(function (resp) {
-                _this.post = resp.data
-                document.title=resp.data.title
-                console.log(resp.data)
+                _this.post = JSON.parse(resp.data.data)
+                document.title=resp.data.data.title
             })
             axios({
                 method: "get",
-                url: "/getReplyServlet" + '?page=' + page + "&pid=" + pid
+                url: "/reply/getReplyList" + '?page=' + page + "&pid=" + pid
             }).then(function (resp) {
-                _this.replylist = resp.data
-                console.log(resp.data)
+                _this.replylist = resp.data.data
             })
         },
         updated(){
@@ -417,16 +414,15 @@
                         console.log($(".deletereply").index(this))
                         axios({
                             method: "POST",
-                            url: "/deletereplyServlet",
+                            url: "/reply/deletereply",
                             data: "rid=" + _this.replylist[$(".deletereply").index(this)].rid
                         }).then(function (response) {
-                            console.log(response.data.msg)
-                            if (response.data.msg == "删除成功") {
+                            if (response.data.data == "删除成功") {
                                 setTimeout("location.reload(true)", 1000)
                                 Swal.fire(
                                     {
                                         icon: 'success',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -435,7 +431,7 @@
                                 Swal.fire(
                                     {
                                         icon: 'error',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -458,16 +454,15 @@
                         console.log($(".deletereply").index(this))
                         axios({
                             method: "POST",
-                            url: "/deletepostServlet",
+                            url: "/posts/deletepost",
                             data: "pid=" + _this.post.pid
                         }).then(function (response) {
-                            console.log(response.data.msg)
-                            if (response.data.msg == "删除成功") {
+                            if (response.data.data == "删除成功") {
                                 setTimeout("location.reload(true)", 1000)
                                 Swal.fire(
                                     {
                                         icon: 'success',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -476,7 +471,7 @@
                                 Swal.fire(
                                     {
                                         icon: 'error',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -507,22 +502,22 @@
                     console.log(content)
                     axios({
                         method: "post",
-                        url: "/sendreplyServlet",
+                        url: "/reply/sendreply",
                         data: "pid=" + this.post.pid + "&content=" + content+"&replyuid="+this.replyuid
                     }).then(function (resp) {
                         iconmark = 'error'
-                        if (resp.data.msg == "发送成功") {
+                        if (resp.data.data == "发送成功") {
                             iconmark = "success";
                         }
                         Swal.fire({
                             icon: iconmark,
-                            title: resp.data.msg,
+                            title: resp.data.data,
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        // if (resp.data.msg == "发送成功") {
-                        //     setTimeout("window.location.reload(true)", 1000);
-                        // }
+                        if (resp.data.data == "发送成功") {
+                            setTimeout("window.location.reload(true)", 1000);
+                        }
                     })
                 }
             }

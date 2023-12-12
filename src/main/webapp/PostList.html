@@ -127,7 +127,7 @@
     resourceposition = resourceposition + 10
     resourcepositionend = URL.indexOf("?");
     postclass = URL.substring(resourceposition, resourcepositionend)
-    sendurl = "/getPostList/" + postclass
+    sendurl = "/posts/getPostList/" + postclass
     pagepos = URL.indexOf("page=");
     page = URL.substring(pagepos + 5)
     totalcount = 1;
@@ -147,15 +147,15 @@
                 method: "post",
                 url: sendurl + "?page=" + page
             }).then(function (resp) {
-                _this.postlist = resp.data
+                _this.postlist = JSON.parse(resp.data.data)
             })
             //获取版区名称
             axios({
                 method: "post",
-                url: "/getpostclassnameServlet",
+                url: "/postclass/getpostclassname",
                 data:"postclass="+postclass
             }).then(function (resp) {
-                document.title=resp.data.title
+                document.title=resp.data.data.pcname
             })
         },
         methods: {
@@ -178,20 +178,20 @@
                 } else {
                     axios({
                         method: "post",
-                        url: "/sendpostServlet",
+                        url: "/posts/sendpost",
                         data: "pcid=" + this.postlist[0].pcid + "&title=" + this.title + "&content=" + tinyMCE.activeEditor.getContent()
                     }).then(function (resp) {
                         iconmark = 'error'
-                        if (resp.data.msg == "发送成功") {
+                        if (resp.data.data == "发送成功") {
                             iconmark = "success";
                         }
                         Swal.fire({
                             icon: iconmark,
-                            title: resp.data.msg,
+                            title: resp.data.data,
                             showConfirmButton: false,
                             timer: 1500
                         })
-                        if (resp.data.msg == "发送成功") {
+                        if (resp.data.data == "发送成功") {
                             setTimeout("window.location.reload(true)", 1000);
                         }
                     })

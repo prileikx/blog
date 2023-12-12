@@ -138,21 +138,20 @@
                 //搜索帖子,返回帖子列表
                 axios({
                     method: "post",
-                    url: "/searchpostServlet",
+                    url: "/posts/searchpost",
                     data:"page="+page+"&searchcontent="+$("#searchcontent").val()
                 }).then(function (resp) {
-                    v.postlist = resp.data
-                    console.log(resp.data)
+                    v.postlist = JSON.parse(resp.data.data)
                     $("#searchresult").show()
                 })
             }
             //查询结果的帖子总数量
             axios({
                 method: "post",
-                url: "/searchpostcountServlet",
+                url: "/posts/searchpostcount",
                 data:"searchcontent="+$("#searchcontent").val()
             }).then(function (resp) {
-                totalcount = resp.data.totalcount
+                totalcount = resp.data.data
                 console.log("totalcount="+totalcount)
                 $('.pagination').jqPaginator({
                     totalCounts: Number(totalcount),

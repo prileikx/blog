@@ -27,4 +27,12 @@ public class Staticcontroller {
         //转发,不会改变网址
         request.getRequestDispatcher("/user/msg.html").forward(request,response);
     }
+    @RequestMapping("/PostClass/*")
+    public void postclass(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/PostList.html").forward(request,response);
+    }
+    @RequestMapping("/Posts/*")
+    public void posts(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/postContent.html").forward(request,response);
+    }
 }
