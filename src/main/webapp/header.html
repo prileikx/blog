@@ -184,7 +184,7 @@ $(document).ready(function () {
   $("#logout").click(function (){
     axios({
       method: "post",
-      url: "/logoutServlet"
+      url: "/user/logout"
     }).then(function (resp) {
       //若不是登陆状态或者用户验证错误,则清除cookie
       $.cookie("uid",null,{expires: -1,path: "/"})

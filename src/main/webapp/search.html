@@ -177,7 +177,7 @@
                         }else{
                             axios({
                                 method: "post",
-                                url: "/searchpostServlet",
+                                url: "/posts/searchpost",
                                 data:"page="+num+"&searchcontent="+$("#searchcontent").val()
                             }).then(function (resp) {
                                 v.postlist = resp.data

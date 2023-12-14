@@ -354,7 +354,7 @@
             // 通过axios用ajax方式发送post请求
             axios({
                 method: "POST",
-                url: "/getMessageListServlet",
+                url: "/message/getMessageList",
                 data: "page=1"
             }).then(function (resp) {
                 //设置vue中的数据为post请求返回的数据
@@ -377,10 +377,10 @@
             //用axios通过ajax方式发送post请求
             axios({
                 method: "post",
-                url: "/getMessageCountServlet"
+                url: "/message/getMessageCount"
             }).then(function (resp) {
                 //返回的是消息的总数量
-                msgtotalcount = resp.data.data.msgtotalcount
+                msgtotalcount = resp.data.data
                 console.log("totalcount=" + msgtotalcount)
                 //分页,设置pagesize每页10个,会自动根据总数量计算出页数,current当前页数
                 $('.pagination').jqPaginator({
@@ -399,7 +399,7 @@
                             //同上,携带数据page=num,num即为用户点击的页数,返回结果为用户的消息列表
                             axios({
                                 method: "POST",
-                                url: "/getMessageListServlet",
+                                url: "/message/getMessageList",
                                 data: "page=" + num
                             }).then(function (resp) {
                                 //返回结果给vue中的数据赋值
@@ -431,7 +431,7 @@
             //发送请求获得用户的收藏列表
             axios({
                 method: "POST",
-                url: "/getusercollectServlet",
+                url: "/collect/getusercollect",
                 data: "page=1"
             }).then(function (resp) {
                 v.collectlist = resp.data.data
@@ -450,11 +450,9 @@
             //返回结果为用户收藏的总数量
             axios({
                 method: "post",
-                url: "/getcollectcountServlet"
+                url: "/collect/getcollectcount"
             }).then(function (resp) {
-                totalcount = resp.data.data.totalcount
-                console.log("totalcount=" + totalcount)
-                console.log("分页被初始化了")
+                totalcount = resp.data.data
                 //还是分页
                 $('.pagination').jqPaginator({
                     totalCounts: Number(totalcount),
@@ -471,7 +469,7 @@
                         if (type == "change") {
                             axios({
                                 method: "POST",
-                                url: "/getusercollectServlet",
+                                url: "/collect/getusercollect",
                                 data: "page=" + num
                             }).then(function (resp) {
                                 v.collectlist = resp.data.data
@@ -575,17 +573,17 @@
                     //携带数据email,password,
                     axios({
                         method: "POST",
-                        url: "/changeemailServlet",
+                        url: "/user/changeemail",
                         data: "email=" + $("#change_email_text").val() + "&password=" + sha1($("#password_confirm").val())
                     }).then(function (response) {
-                        console.log(response.data.msg)
-                        if (response.data.msg == "修改成功") {
+                        console.log(response.data.data)
+                        if (response.data.data == "修改成功") {
                             //修改成功1秒后刷新网页
                             setTimeout("location.reload(true)", 1000)
                             Swal.fire(
                                 {
                                     icon: 'success',
-                                    title: response.data.msg,
+                                    title: response.data.data,
                                     showConfirmButton: false,
                                     timer: 2000
                                 }
@@ -594,7 +592,7 @@
                             Swal.fire(
                                 {
                                     icon: 'error',
-                                    title: response.data.msg,
+                                    title: response.data.data,
                                     showConfirmButton: false,
                                     timer: 2000
                                 }
@@ -641,18 +639,18 @@
                             //需要注意携带的是加密后的密码
                             axios({
                                 method: "POST",
-                                url: "/changepasswordServlet",
+                                url: "/user/changepassword",
                                 data: "password=" + sha1($("#password_origin").val()) + "&afpassword=" + sha1($("#change_password").val())
                             }).then(function (response) {
-                                console.log(response.data.msg)
-                                if (response.data.msg == "修改成功,请重新登录") {
+                                console.log(response.data.data)
+                                if (response.data.data == "修改成功,请重新登录") {
                                     $.cookie("uid", null, {expires: -1, path: "/"})
                                     $.cookie("verifycode", null, {expires: -1, path: "/"})
                                     setTimeout("location.reload(true)", 1000)
                                     Swal.fire(
                                         {
                                             icon: 'success',
-                                            title: response.data.msg,
+                                            title: response.data.data,
                                             showConfirmButton: false,
                                             timer: 2000
                                         }
@@ -661,7 +659,7 @@
                                     Swal.fire(
                                         {
                                             icon: 'error',
-                                            title: response.data.msg,
+                                            title: response.data.data,
                                             showConfirmButton: false,
                                             timer: 2000
                                         }
@@ -718,16 +716,15 @@
                     if ($("#change_username").val().length >= 3 && $("#change_username").val().length <= 10) {
                         axios({
                             method: "POST",
-                            url: "/changeusernameServlet",
+                            url: "/user/changeusername",
                             data: "username=" + $("#change_username").val()
                         }).then(function (response) {
-                            console.log(response.data.msg)
-                            if (response.data.msg == "修改成功") {
+                            if (response.data.data == "修改成功") {
                                 setTimeout("location.reload(true)", 1000)
                                 Swal.fire(
                                     {
                                         icon: 'success',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -736,7 +733,7 @@
                                 Swal.fire(
                                     {
                                         icon: 'error',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -782,15 +779,15 @@
                 if (res.value) {
                     axios({
                         method: "POST",
-                        url: "/changedescribeServlet",
+                        url: "/user/changedescribe",
                         data: "describe=" + $("#change_describe").val()
                     }).then(function (response) {
-                        if (response.data.msg == "修改成功") {
+                        if (response.data.data == "修改成功") {
                             setTimeout("location.reload(true)", 1000)
                             Swal.fire(
                                 {
                                     icon: 'success',
-                                    title: response.data.msg,
+                                    title: response.data.data,
                                     showConfirmButton: false,
                                     timer: 2000
                                 }
@@ -799,7 +796,7 @@
                             Swal.fire(
                                 {
                                     icon: 'error',
-                                    title: response.data.msg,
+                                    title: response.data.data,
                                     showConfirmButton: false,
                                     timer: 2000
                                 }
@@ -894,16 +891,15 @@
                         // 携带数据需要发送的公告
                         axios({
                             method: "POST",
-                            url: "/sendpublicmsgServlet",
+                            url: "/message/sendpublicmsg",
                             data: "publicmsg_content=[公告]" + $("#publicmsg_content").val()
                         }).then(function (response) {
-                            console.log(response.data.msg)
-                            if (response.data.msg == "发布成功") {
+                            if (response.data.data == "发布成功") {
                                 setTimeout("location.reload(true)", 1000)
                                 Swal.fire(
                                     {
                                         icon: 'success',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }
@@ -912,7 +908,7 @@
                                 Swal.fire(
                                     {
                                         icon: 'error',
-                                        title: response.data.msg,
+                                        title: response.data.data,
                                         showConfirmButton: false,
                                         timer: 2000
                                     }

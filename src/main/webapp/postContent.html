@@ -266,27 +266,27 @@
         $("#collectico").click(function () {
             axios({
                 method: "post",
-                url: "/insertcollectServlet",
+                url: "/collect/insertcollect",
                 data:"pid="+$("#getpid").text()
             }).then(function (resp) {
                 //resp是返回的数据
                 //icon是弹窗时出现的图标,默认是错误,只有当正确执行时才会出现正确提示
                 var icontype='error'
-                if (resp.data.msg == '收藏成功') {
+                if (resp.data.data == '收藏成功') {
                     icontype = 'success'
                     // 弹窗
                     Swal.fire({
                         icon: icontype,
-                        title: resp.data.msg,
+                        title: resp.data.data,
                         showConfirmButton: false,
                         timer: 1500
                     })
                 }
-                else if (resp.data.msg == '已经收藏过了,是否取消收藏?'){
+                else if (resp.data.data == '已经收藏过了,是否取消收藏?'){
                     icontype = 'error'
                     Swal.fire({
                         icon: icontype,
-                        title: resp.data.msg,
+                        title: resp.data.data,
                         showCancelButton: true,
                         showConfirmButton: true,
                         confirmButtonText: '取消收藏',
@@ -296,16 +296,16 @@
                         if (res.value) {
                             axios({
                                 method: "POST",
-                                url: "/deletecollectServlet",
+                                url: "/collect/deletecollect",
                                 data:"pid="+$("#getpid").text()
                             }).then(function (response) {
-                                console.log(response.data.msg)
-                                if (response.data.msg == "取消收藏成功") {
+                                console.log(response.data.data)
+                                if (response.data.data == "取消收藏成功") {
                                     Swal.fire(
                                         {
                                             type: 'success',
                                             icon: 'success',
-                                            title: response.data.msg,
+                                            title: response.data.data,
                                             showConfirmButton: false,
                                             timer: 2000
                                         }
@@ -315,7 +315,7 @@
                                         {
                                             type: 'error',
                                             icon: 'error',
-                                            title: response.data.msg,
+                                            title: response.data.data,
                                             showConfirmButton: false,
                                             timer: 2000
                                         }
@@ -327,7 +327,7 @@
                 }else {
                     Swal.fire({
                         icon: icontype,
-                        title: resp.data.msg,
+                        title: resp.data.data,
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -374,7 +374,7 @@
                 method: "post",
                 url: sendurl
             }).then(function (resp) {
-                _this.post = JSON.parse(resp.data.data)
+                _this.post = resp.data.data
                 document.title=resp.data.data.title
             })
             axios({

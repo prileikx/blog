@@ -1,7 +1,10 @@
 package cn.devsp.blog.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import lombok.Data;
@@ -41,6 +44,9 @@ public class Posts implements Serializable {
     private Integer pcid;
 
     private String content;
-
+    @TableField(exist = false)
+    private String username;
+    @TableField(exist = false)
+    private String img;
 
 }

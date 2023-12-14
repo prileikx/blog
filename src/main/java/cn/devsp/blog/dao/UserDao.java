@@ -32,6 +32,10 @@ public interface UserDao extends BaseMapper<User> {
     User selectUserWithEmailByUid(@Param("uid")Integer uid);
     @Update("update user set img = #{img} where uid=#{uid};")
     Integer uploadimg(@Param("img")String img,@Param("uid")Integer uid);
-
-
+    @Select("select upassword from user where uid = #{uid}")
+    String getUpasswordByUidString(@Param("uid")Integer uid);
+    @Update("update user set verify = null where uid=#{uid}")
+    void updateVerifySetNull(@Param("uid")Integer uid);
+    @Select("select verify from user where uid=#{uid}")
+    String selectVerifyByUid(@Param("uid")Integer uid);
 }

@@ -1,6 +1,7 @@
 package cn.devsp.blog.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -33,6 +34,10 @@ public class Reply implements Serializable {
     private String content;
 
     private LocalDateTime sendtime;
+    @TableField(exist = false)
+    private  String username;
+    @TableField(exist = false)
+    private String img;
 
 
 }

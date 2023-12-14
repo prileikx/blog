@@ -112,7 +112,7 @@
                 </label>
             </td>
             <td>
-                <img src="/checkcodeServlet" alt="验证码" @click="changeverifycode" id="verifyImg">
+                <img src="/captcha/checkcode" alt="验证码" @click="changeverifycode" id="verifyImg">
                 <a href="#" id="changImg" @click="changeverifycode" style="margin-left: 20px">看不清?换一张</a>
             </td>
         </tr>
@@ -153,18 +153,18 @@
         $("#username").blur(function () {
                 axios({
                     method: "GET",
-                    url: "/checkusernameifcanbeuseServlet",
+                    url: "/user/checkusernameifcanbeuse",
                     params:{
                         username:$("#username").val()
                     }
                 }).then(function (resp) {
-                    if (resp.data.msg=="该用户名可以使用"){
+                    if (resp.data.data=="该用户名可以使用"){
                         $("#tips").css('color','green')
-                        $("#tips").text(resp.data.msg)
+                        $("#tips").text(resp.data.data)
                     }
                     else {
                         $("#tips").css('color','red')
-                        $("#tips").text(resp.data.msg)
+                        $("#tips").text(resp.data.data)
                     }
 
                 })
@@ -223,16 +223,16 @@
                     $("#sendemailbtn").attr("disabled",true);
                     axios({
                         method: "POST",
-                        url: "/sendregisteremailServlet",
+                        url: "/captcha/sendregisteremail",
                         data: "email=" + this.email
                     }).then(function (resp) {
                         var icontype = "error"
-                        if (resp.data.msg == '验证码发送成功,如果未收到请检查垃圾邮件箱') {
+                        if (resp.data.data == '验证码发送成功,如果未收到请检查垃圾邮件箱') {
                             icontype = 'success'
                         }
                         Swal.fire({
                             icon: icontype,
-                            title: resp.data.msg,
+                            title: resp.data.data,
                             showConfirmButton: false,
                             timer: 1500
                         })
@@ -241,7 +241,7 @@
                 },
                 //看不清换一张验证码
                 changeverifycode: function () {
-                    document.getElementById("verifyImg").src = "/checkcodeServlet?" + new Date().getMilliseconds()
+                    document.getElementById("verifyImg").src = "/captcha/checkcode?" + new Date().getMilliseconds()
                 },
                 //注册功能
                 register:function () {
@@ -260,14 +260,14 @@
 
                                 axios({
                                     method: "POST",
-                                    url: "/registerServlet",
+                                    url: "/user/register",
                                     data:"username="+this.username+"&email="+this.email+"&email_verify="+this.email_verify+"&upassword="+this.upassword+"&verify_code="+this.checkcode
                                 }).then(function (resp) {
-                                    if (resp.data.msg=="注册成功")
+                                    if (resp.data.data=="注册成功")
                                     {
                                         Swal.fire({
                                             icon: 'success',
-                                            title: resp.data.msg,
+                                            title: resp.data.data,
                                             showConfirmButton: false,
                                             timer: 1500
                                         })
@@ -276,7 +276,7 @@
                                     else {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: resp.data.msg,
+                                            title: resp.data.data,
                                             showConfirmButton: false,
                                             timer: 1500
                                         })

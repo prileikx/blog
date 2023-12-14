@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +91,7 @@ public class PostsServiceImpl extends ServiceImpl<PostsDao, Posts> implements IP
         Posts emptyPost = new Posts();
         Integer uid = userService.CheckloginStatus(request);
         Integer limits = 0;
+        R<List> r = new R<>();
         if (uid < 0) {
             limits = 50;
         } else {
@@ -105,32 +107,31 @@ public class PostsServiceImpl extends ServiceImpl<PostsDao, Posts> implements IP
                     page=1;
                 }
                 Integer start = (page-1)*10;
-                System.out.println("pcid---------------------->"+pcid);
                 List<Posts> posts = postsDao.selectpostList(pcid,start);
-                System.out.println("posts---------------------->"+posts);
+
                 if (posts != null && !posts.isEmpty()) {
-                    String postList = JSON.toJSONString(posts);
-                    return R.success(postList);
+                    r.setData(posts);
+                    return r;
                 } else {
                     emptyPost.setTitle("版区没有任何帖子");
                     emptyPost.setPcid(pcid);
                     emptyPostList.add(emptyPost);
-                    String emptyPostListString = JSON.toJSONString(emptyPostList);
-                    return R.success(emptyPostListString);
+                    r.setData(emptyPostList);
+                    return r;
                 }
             } else {
                 emptyPost.setTitle("不存在的版区");
                 emptyPost.setPcid(pcid);
                 emptyPostList.add(emptyPost);
-                String emptyPostListString = JSON.toJSONString(emptyPostList);
-                return R.success(emptyPostListString);
+                r.setData(emptyPostList);
+                return r;
             }
         }else {
             emptyPost.setTitle("访问权限不足");
             emptyPost.setPcid(pcid);
             emptyPostList.add(emptyPost);
-            String emptyPostListString = JSON.toJSONString(emptyPostList);
-            return R.success(emptyPostListString);
+            r.setData(emptyPostList);
+            return r;
         }
     }
     @Override
@@ -211,8 +212,16 @@ public class PostsServiceImpl extends ServiceImpl<PostsDao, Posts> implements IP
         }
         String URI = request.getRequestURI();
         String pid = URI.substring(19);
-        Posts post = postsDao.selectById(pid);
+        R<Posts> r = new R<>();
         Posts emptyPost = new Posts();
+        if (pid.equals("null")){
+            emptyPost.setTitle("主题不存在");
+            emptyPost.setContent("主题不存在");
+            r.setData(emptyPost);
+            return r;
+        }
+        Posts post = postsDao.selectPostContent(Integer.valueOf(pid));
+
         Integer uid = userService.CheckloginStatus(request);
         Integer limits = 0;
         if (uid < 0) {
@@ -228,21 +237,23 @@ public class PostsServiceImpl extends ServiceImpl<PostsDao, Posts> implements IP
         String poststring = JSON.toJSONString(post);
         if (limits >= postclassDao.selectById(pcid).getLimits()) {
             if (pcid != null) {
-                String postContent = JSON.toJSONString(post);
                 Posts posts = new Posts();
                 posts.setPid(Integer.valueOf(pid));
                 posts.setViewcount(post.getViewcount()+1);
                 postsDao.updateById(posts);
-                return R.success(postContent);
+                r.setData(post);
+                return r;
             } else {
                 emptyPost.setTitle("主题不存在");
-                String emptyPostListString = JSON.toJSONString(emptyPost);
-                return R.success(emptyPostListString);
+                emptyPost.setContent("主题不存在");
+                r.setData(emptyPost);
+                return r;
             }
         } else {
             emptyPost.setTitle("访问权限不足");
-            String emptyPostString = JSON.toJSONString(emptyPost);
-            return R.success(emptyPostString);
+            emptyPost.setContent("访问权限不足");
+            r.setData(emptyPost);
+            return r;
         }
     }
     @Override
@@ -265,6 +276,7 @@ public class PostsServiceImpl extends ServiceImpl<PostsDao, Posts> implements IP
                 post.setPcid(pcid);
                 post.setContent(content);
                 post.setTitle(title);
+                post.setSendtime(LocalDateTime.now());
                 postsDao.insert(post);
                 user.setPostcount(user.getPostcount()+1);
                 userDao.updateById(user);

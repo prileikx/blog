@@ -1,7 +1,10 @@
 package cn.devsp.blog.service;
 
+import cn.devsp.blog.common.R;
 import cn.devsp.blog.domain.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMessageService extends IService<Message> {
 
+    R getMessageCount(HttpServletRequest request);
+
+    R getMessageList(HttpServletRequest request, Integer page);
+
+    R sendpublicmsg(HttpServletRequest request, String publicmsg_content);
 }

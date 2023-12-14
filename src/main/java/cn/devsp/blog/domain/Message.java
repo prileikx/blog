@@ -1,6 +1,7 @@
 package cn.devsp.blog.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -23,16 +24,15 @@ public class Message implements Serializable {
 
     @TableId(value = "mid", type = IdType.AUTO)
     private Integer mid;
-
     private String msg;
-
     private Integer uid;
-
     private LocalDateTime sendtime;
-
     private Integer pid;
-
     private Integer whoreplyuid;
+    @TableField(exist = false)
+    private String username;
+    @TableField(exist = false)
+    private String title;
 
 
 }

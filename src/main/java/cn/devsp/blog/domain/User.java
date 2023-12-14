@@ -35,7 +35,7 @@ public class User implements Serializable {
     @TableField(select = false)
     private String verify;
 
-    private String registertime;
+    private LocalDateTime registertime;
 
     private Integer ifconfirmemail;
 

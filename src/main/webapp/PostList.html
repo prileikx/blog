@@ -147,7 +147,7 @@
                 method: "post",
                 url: sendurl + "?page=" + page
             }).then(function (resp) {
-                _this.postlist = JSON.parse(resp.data.data)
+                _this.postlist = resp.data.data
             })
             //获取版区名称
             axios({
